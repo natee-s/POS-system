@@ -22,7 +22,7 @@ const Sidebar =()=>{
                 {/* System name */}
                 <h1 className="font-bold text-2xl">SmartPOS</h1>
             </div>
-            {/* Formenu catagory */}
+            {/* For menu catagory */}
             <div className="border border-dashed border-gray-300 p-2 text-sm text-gray-400">
                 <nav className="space-y-2">
                     <Menulink icon={<GiFoodTruck/>} text="All Menu" />
@@ -34,7 +34,17 @@ const Sidebar =()=>{
                     <Menulink icon={<SiIfood/>} text="Other Menu" />
                 </nav>
             </div>
+            {/* Profile*/}
+            <div className="mt-5">
+                <div className="flex flex-col items-center gap-3 bg-gray-50 p-7 rounded-xl border border-gray-100 cursor-pointer hover:bg-gray-100 transition-all">
+                    <img src="public\profile.jpg" alt="profile picture" className="w-10 h-10 rounded-full object-cover shadow-lg" />
+                <div>
+                    <h4 className="font-bold text-sm text-gray-800">Nameeeeee</h4>
+                    <p className="text-xs text-gray-500 py-2">Member : Goal</p>
+                </div>
 
+                </div>
+            </div>
           </div>
         </div>
     )
@@ -42,9 +52,9 @@ const Sidebar =()=>{
 
 const Menulink = ({icon, text, active}) => {
     return(
-        <div className={`flex items-center gap-3 p-3 round-xl  cursor-pointer transition-colors ${active? 'bg-yellow-400':'text-gray-500 hover:bg-gray-100 hover:text-gray-700'}`}>
-            <span className="text-xl">{icon}</span>
-            <span className="text-xl">{text}</span>
+        <div className={`flex items-center gap-3 p-3 round-xl  cursor-pointer transition-colors ${active? 'bg-yellow-400':'text-gray-500 hover:bg-red-500 hover:text-gray-700'}`}>
+            <p className="text-xl">{icon}</p>
+            <p className="text-xl">{text}</p>
         </div>
     );
 };
