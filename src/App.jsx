@@ -1,14 +1,28 @@
-import React from "react";
+import React,{useState} from "react";
 import Sidebar from "./components/Sidebar";
 import { IoIosSearch } from "react-icons/io";
 import { IoArrowBackOutline } from "react-icons/io5";
+import ProductCard from "./components/ProductCard";
+import { data } from "./data";
 
 function App() {
+  const [selectedCategory, setSelectedCategory] = useState("All Menu");
+  // Category Filter
+  // ถ้า selectedCategory เป็น "all" ให้เอา products ทั้งหมดมา
+  // ถ้าไม่ใช่ ให้กรองเอาเฉพาะ item ที่ category ตรงกับที่เลือก
+  const filteredData = selectedCategory === "all"
+    ? data : data.filter(item => item.category === selectedCategory);
+  
+    const pageTile = selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1);
+
   return (
     //ส่วนที่แสดงผลทั้งหมดในหน้าจอ
     <div className="flex w-full min-h-screen bg-gray-100">
       {/*พื้นที่สำหรับสร้าง sidebar*/}
-      <Sidebar />
+      <Sidebar 
+        onMenuClick = {setSelectedCategory}
+        activeMenu = {selectedCategory}
+      />
 
       {/*พื้นที่สำหรับสร้าง main content*/}
       <div className="flex-1 bg-gray-50 h-screen overflow-y-auto">
@@ -22,15 +36,15 @@ function App() {
             </button>
             {/* กล่องข้อความ (Breadcrumb + Title) */}
             <div className="flex flex-col">
-              <div className="h-12 flex items-center">
+              {/* <div className="h-12 flex items-center">
                 <span className="text-sm text-gray-400 font-medium">
                   Food & dirnk &gt; Burgers
                 </span>
-              </div>
+              </div> */}
             
               {/* ---หัวข้อ--- */}
               <h2 className="text-3xl font-bold text-gray-800">
-                Burgers🍔
+                {pageTile}
               </h2>
             </div>
           </div>
@@ -43,9 +57,21 @@ function App() {
                 className="bg-transparent outline-one text-gray-600 w-full placeholder-gray-400"
               />
             </div>
-          
-
         </header>
+        {/*Card Area*/}
+        <main className="pt-12 px-8 pb-20">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-y-20 gap-x-8">
+            {filteredData.map((food)=>(
+              <ProductCard
+                key={food.id}
+                img={food.img}
+                name={food.name}
+                detail={food.detail}
+                price={food.price}
+              />
+              ))}
+          </div>
+        </main>
       </div>
     </div>
   );

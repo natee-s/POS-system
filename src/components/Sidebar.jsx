@@ -7,7 +7,7 @@ import { MdEmojiFoodBeverage } from "react-icons/md";
 import { LuDessert } from "react-icons/lu";
 import { SiIfood } from "react-icons/si";
 
-const Sidebar =()=>{
+const Sidebar =({onMenuClick, activeMenu})=>{
     return(
         // main sidebar เราจะแบ่งเป็น 2 ส่วน คือ "เมนูบน" กับ "โปรไฟล์ล่าง"
         // พื้นที่ส่วนบน
@@ -25,13 +25,13 @@ const Sidebar =()=>{
             {/* For menu catagory */}
             <div className="border border-dashed border-gray-300 p-2 text-sm text-gray-400">
                 <nav className="space-y-2">
-                    <Menulink icon={<GiFoodTruck/>} text="All Menu" />
-                    <Menulink icon={<FaBowlFood/>} text="Fried Rice" />
-                    <Menulink icon={<CiBowlNoodles/>} text="Noodles" />
-                    <Menulink icon={<MdEmojiFoodBeverage />} text="Beverages" />
-                    <Menulink icon={<GiFrenchFries/>} text="snack" />
-                    <Menulink icon={<LuDessert/>} text="Dessert"  />
-                    <Menulink icon={<SiIfood/>} text="Other Menu" />
+                    <Menulink icon={<GiFoodTruck/>} text="All Menu" onClick={()=>onMenuClick("all")} active={activeMenu === "all"}/>
+                    <Menulink icon={<FaBowlFood/>} text="Fried Rice" onClick={()=>onMenuClick("Fried Rice")} active={activeMenu === "fried-rice"}/>
+                    <Menulink icon={<CiBowlNoodles/>} text="Noodles" onClick={()=>onMenuClick("Noodles")} active={activeMenu === "noodles"}/>
+                    <Menulink icon={<MdEmojiFoodBeverage />} text="Beverages" onClick={()=>onMenuClick("Beverages")} active={activeMenu === "beverages"}/>
+                    <Menulink icon={<GiFrenchFries/>} text="Snack" onClick={()=>onMenuClick("Snack")} active={activeMenu === "snack"}/>
+                    <Menulink icon={<LuDessert/>} text="Dessert"  onClick={()=>onMenuClick("Dessert")} active={activeMenu === "dessert"}/>
+                    <Menulink icon={<SiIfood/>} text="Other Menu" onClick={()=>onMenuClick("Other Menu")} active={activeMenu === "other-menu"}/>
                 </nav>
             </div>
             {/* Profile*/}
@@ -50,9 +50,11 @@ const Sidebar =()=>{
     )
 }
 
-const Menulink = ({icon, text, active}) => {
+const Menulink = ({icon, text, active, onClick}) => {
     return(
-        <div className={`flex items-center gap-3 p-3 round-xl  cursor-pointer transition-colors ${active? 'bg-yellow-400':'text-gray-500 hover:bg-red-500 hover:text-gray-700'}`}>
+        <div 
+            onClick={onClick}
+            className={`flex items-center gap-3 p-3 round-xl  cursor-pointer transition-colors ${active? 'bg-yellow-400':'text-gray-500 hover:bg-red-500 hover:text-gray-700'}`}>
             <p className="text-xl">{icon}</p>
             <p className="text-xl">{text}</p>
         </div>
