@@ -1,27 +1,35 @@
-import React,{useState} from "react";
+import React, { useState } from "react";
 import Sidebar from "./components/Sidebar";
 import { IoIosSearch } from "react-icons/io";
 import { IoArrowBackOutline } from "react-icons/io5";
 import ProductCard from "./components/ProductCard";
 import { data } from "./data";
+import OrderSidebar from "./components/OrderSidebar";
 
 function App() {
-  const [selectedCategory, setSelectedCategory] = useState("All Menu");
+  const [selectedCategory, setSelectedCategory] = useState("all");
+
+  // สร้าง state สำหรับเก็บ สินค้าที่กำลังถูกเลือก
+  const [selectedProduct, setSelectedProduct] = useState(null);
+
   // Category Filter
   // ถ้า selectedCategory เป็น "all" ให้เอา products ทั้งหมดมา
   // ถ้าไม่ใช่ ให้กรองเอาเฉพาะ item ที่ category ตรงกับที่เลือก
-  const filteredData = selectedCategory === "all"
-    ? data : data.filter(item => item.category === selectedCategory);
-  
-    const pageTile = selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1);
+  const filteredData =
+    selectedCategory === "all"
+      ? data
+      : data.filter((item) => item.category === selectedCategory);
+
+  const pageTitle =
+    selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1);
 
   return (
     //ส่วนที่แสดงผลทั้งหมดในหน้าจอ
     <div className="flex w-full min-h-screen bg-gray-100">
       {/*พื้นที่สำหรับสร้าง sidebar*/}
-      <Sidebar 
-        onMenuClick = {setSelectedCategory}
-        activeMenu = {selectedCategory}
+      <Sidebar
+        onMenuClick={setSelectedCategory}
+        activeMenu={selectedCategory}
       />
 
       {/*พื้นที่สำหรับสร้าง main content*/}
@@ -41,38 +49,46 @@ function App() {
                   Food & dirnk &gt; Burgers
                 </span>
               </div> */}
-            
+
               {/* ---หัวข้อ--- */}
-              <h2 className="text-3xl font-bold text-gray-800">
-                {pageTile}
-              </h2>
+              <h2 className="text-3xl font-bold text-gray-800">{pageTitle}</h2>
             </div>
           </div>
-            {/* ฝั่งขวา: Search Bar */}
-            <div className="bg-white flex items-center gap-3 px-4 py-3 rounded-xl shadow-sm w-80 border border-gray-100 ">
-              <IoIosSearch className="text-gray-400 text-xl" />
-              <input
-                type="text"
-                placeholder="Search . . ."
-                className="bg-transparent outline-one text-gray-600 w-full placeholder-gray-400"
-              />
-            </div>
+          {/* ฝั่งขวา: Search Bar */}
+          <div className="bg-white flex items-center gap-3 px-4 py-3 rounded-xl shadow-sm w-80 border border-gray-100 ">
+            <IoIosSearch className="text-gray-400 text-xl" />
+            <input
+              type="text"
+              placeholder="Search . . ."
+              className="bg-transparent outline-none text-gray-600 w-full placeholder-gray-400"
+            />
+          </div>
         </header>
         {/*Card Area*/}
         <main className="pt-12 px-8 pb-20">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-y-20 gap-x-8">
-            {filteredData.map((food)=>(
+            {filteredData.map((food) => (
               <ProductCard
                 key={food.id}
                 img={food.img}
                 name={food.name}
                 detail={food.detail}
                 price={food.price}
+                //ส่งคำสั่ง onClick ไปให้ card*
+                onClick={() => setSelectedProduct(food)}
               />
-              ))}
+            ))}
           </div>
         </main>
       </div>
+      {/* 4. แสดง OrderSidebar เมื่อมีข้อมูลสินค้า (selectedProduct ไม่ใช่ null) */}
+      {/* ส่งข้อมูล product และฟังก์ชันปิด (onClose) เข้าไป */}
+      {selectedProduct && (
+        <OrderSidebar
+          product={selectedProduct}
+          onClose={() => setSelectedProduct(null)}
+        />
+      )}
     </div>
   );
 }

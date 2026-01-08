@@ -1,9 +1,11 @@
 import React from "react";
 
-const ProductCard = ({img, name, detail, price}) => {
+const ProductCard = ({img, name, detail, price, onClick}) => {
     return (
         // Card box
-        <div className="bg-white p-6 rounded-[40px] shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer hover:translate-2 flex flex-col items-center">
+        <div 
+            onClick={onClick}
+            className="bg-white p-6 rounded-[40px] shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer hover:translate-2 flex flex-col items-center">
             {/*image*/}
             <img
                 src={img}
