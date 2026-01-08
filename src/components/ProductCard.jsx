@@ -22,7 +22,7 @@ const ProductCard = ({img, name, detail, price, onClick}) => {
             </p>
             {/*Price*/}
             <span className="text-2xl font-bold text-yellow-400">
-                {price}
+            ฿{price}
             </span>
 
 

@@ -23,7 +23,7 @@ const OrderSidebar = ({product, onClose}) => {
 
   return (
     // main box
-    <div className="fixed right-0 top-0 h-full w-full md:w-96 bg-white shadow-2xl z-50 p-6 flex flex-col justify-between overflow-y-auto">
+    <div className="animate-slide-in animate-slide-out fixed right-0 top-0 h-full w-full md:w-96 bg-white shadow-2xl z-50 p-6 flex flex-col justify-between overflow-y-auto">
       {/*ปุ่มปิด + รายละเอียดสินค้า*/}
       <div>
         {/*ปุ่มปิด*/}
@@ -49,9 +49,8 @@ const OrderSidebar = ({product, onClose}) => {
           <h2 className="text-3xl font-bold text-gray-800 mb-2">
             {product.name}
           </h2>
-          <p className="text-gray-400 text-lg mb-4">{product.weight}</p>
           <span className="text-4xl font-bold text-yellow-400">
-            ${product.price}
+            ฿{product.price}
           </span>
         </div>
         {/* ปุ่มเพิ่ม/ลดจำนวน (Quantity Control) */}
@@ -84,7 +83,7 @@ const OrderSidebar = ({product, onClose}) => {
           className="w-full bg-yellow-400 text-whit py-4 rounded-2xl font-bold text-xl hover:bg-yellow-500 transition-colors shadow-lg hover:shadow-xl active:scale-95 transform duration-200 flex items-center justify-center gap-2">
             Add to Order
             {/*คำนวณราคา (จำนวน * ราคา) */}
-            <span>${totalPrice}</span>
+            <span>฿{totalPrice}</span>
         </button>
       </div>
     </div>
