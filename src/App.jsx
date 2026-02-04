@@ -7,18 +7,24 @@ import { data } from "./data";
 import OrderSidebar from "./components/OrderSidebar";
 
 function App() {
+  const [searchTerm, setSearchTerm] = useState("") //searchTerm คือตัวแปรเก็บข้อความ, setSearchTerm คือฟังก์ชันที่ใช้เปลี่ยนข้อความนั้น
   const [selectedCategory, setSelectedCategory] = useState("all");
 
   // สร้าง state สำหรับเก็บ สินค้าที่กำลังถูกเลือก
   const [selectedProduct, setSelectedProduct] = useState(null);
 
-  // Category Filter
-  // ถ้า selectedCategory เป็น "all" ให้เอา products ทั้งหมดมา
-  // ถ้าไม่ใช่ ให้กรองเอาเฉพาะ item ที่ category ตรงกับที่เลือก
-  const filteredData =
-    selectedCategory === "all"
-      ? data
-      : data.filter((item) => item.category === selectedCategory);
+  // กรองข้อมูล
+  const filteredData = data.filter((item) => {
+    // สร้างเงื่อนไขสำหรับ "หมวดหมู่"
+    const matchesCatagory = selectedCategory === "all" || item.category === selectedCategory;
+
+    // สร้างเงื่อนไขสำหรับ "การค้นหา"
+    // เราใช้ .toLowerCategory() เพื่อให้พิมพ์ตัวเล็ก/ใหญ่ก็หาเจอ
+    const matchesSearch = item.name.toLocaleLowerCase().includes(searchTerm.toLocaleLowerCase());
+
+    // ผลลัพธ์ต้องผ่าน "ทั้งสองเงื่อนไข" ถึงจะยอมให้แสดงบนหน้าจอ
+    return matchesCatagory && matchesSearch;
+  })
 
   const pageTitle =
     selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1);
@@ -61,6 +67,8 @@ function App() {
               type="text"
               placeholder="Search . . ."
               className="bg-transparent outline-none text-gray-600 w-full placeholder-gray-400"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)} //ทุกครั้งที่มีการกดแป้นพิมพ์ (e), มันจะเอาค่าในช่องนั้น (e.target.value) ไปเก็บไว้ใน searchTerm
             />
           </div>
         </header>
