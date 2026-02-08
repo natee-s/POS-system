@@ -1,7 +1,7 @@
 import React, {useState}from "react";
 import { IoCloseOutline, IoAdd, IoRemove } from "react-icons/io5";
 
-const OrderSidebar = ({product, onClose}) => {
+const OrderSidebar = ({product, onClose, onConfirm}) => {
   // สร้าง State สำหรับรับจำนวน เริ่มที่ 1 (สร้าง "ความจำ" ให้หน้าจอ (State))
   const [quantity, setQuantity] = useState(1)
 
@@ -79,7 +79,7 @@ const OrderSidebar = ({product, onClose}) => {
       {/* --- ส่วนล่าง: ปุ่ม Add to Order --- */}
       <div>
         <button 
-        
+          onClick={() => onConfirm(product, quantity)}
           className="w-full bg-yellow-400 text-whit py-4 rounded-2xl font-bold text-xl hover:bg-yellow-500 transition-colors shadow-lg hover:shadow-xl active:scale-95 transform duration-200 flex items-center justify-center gap-2">
             Add to Order
             {/*คำนวณราคา (จำนวน * ราคา) */}
