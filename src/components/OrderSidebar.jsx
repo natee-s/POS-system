@@ -23,11 +23,11 @@ const OrderSidebar = ({product, onClose, onConfirm}) => {
 
   return (
     // main box
-    <div className="animate-slide-in animate-slide-out fixed right-0 top-0 h-full w-full md:w-96 bg-white shadow-2xl z-50 p-6 flex flex-col justify-between overflow-y-auto">
+    <div className="bg-white rounded-4xl w-full max-w-lg overflow-hidden shadow-2xl flex flex-col relative animate-pop-in">
       {/*ปุ่มปิด + รายละเอียดสินค้า*/}
-      <div>
+      <div className="p-8 overflow-y-auto max-h-[80vh]">
         {/*ปุ่มปิด*/}
-        <div className="flex justify-end mb-6">
+        <div className="absolute right-6 top-6 z-30">
           <button 
             onClick={onClose}
             className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 transition-colors">

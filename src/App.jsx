@@ -52,7 +52,7 @@ function App() {
     return matchesCatagory && matchesSearch;
   });
 
-    //LOGIC คำนวณราคารวมทั้งหมด
+  //LOGIC คำนวณราคารวมทั้งหมด
   const totalAmount = cart.reduce((acc, item) => {
     return acc + item.price * item.quantity;
   }, 0);
@@ -158,10 +158,11 @@ function App() {
         <div className="p-6 border-t border-gray-100 bg-gray-50/50">
           <div className="flex justify-between mb-4">
             <span className="text-gray-400">Total Amout</span>
-            
+
             {/* แสดงราคารวมที่คำนวณได้ */}
             <span className="text-2xl font-bold text-gray-800">
-              ฿{totalAmount.toLocaleString(undefined, {
+              ฿
+              {totalAmount.toLocaleString(undefined, {
                 miniumnFractionDigits: 2,
               })}
             </span>
@@ -172,14 +173,23 @@ function App() {
         </div>
       </aside>
 
-      {/* 4. แสดง OrderSidebar เมื่อมีข้อมูลสินค้า (selectedProduct ไม่ใช่ null) */}
+      {/* แสดง OrderSidebar เมื่อมีข้อมูลสินค้า (selectedProduct ไม่ใช่ null) */}
       {/* ส่งข้อมูล product และฟังก์ชันปิด (onClose) เข้าไป */}
       {selectedProduct && (
-        <OrderSidebar
-          product={selectedProduct}
-          onClose={() => setSelectedProduct(null)}
-          onConfirm={addToCart}
-        />
+        //ฉากมืด
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-fade-in"
+          onClick={() => setSelectedProduct(null)} // คลิ๊กที่ว่างแล้วปิด Popup
+        >
+          {/* ตัว popup */}
+          <div onClick={(e) => e.stopPropagation()}>
+            <OrderSidebar
+              product={selectedProduct}
+              onClose={() => setSelectedProduct(null)}
+              onConfirm={addToCart}
+            />
+          </div>
+        </div>
       )}
     </div>
   );
