@@ -5,6 +5,8 @@ import { IoArrowBackOutline } from "react-icons/io5";
 import ProductCard from "./components/ProductCard";
 import { data } from "./data";
 import OrderSidebar from "./components/OrderSidebar";
+import { IoTrashOutline } from "react-icons/io5";
+import { IoAdd, IoRemove } from "react-icons/io5";
 
 function App() {
   const [cart, setCart] = useState([]); //[] (Array ว่าง) เพราะตอนเริ่มเปิดหน้าเว็บมา ตะกร้าต้องว่างเปล่า (ไม่มีของ)
@@ -35,6 +37,31 @@ function App() {
     setSelectedProduct(null);
   };
 
+  //ลบสินค้าออกจากตะกร้า
+  const removeFromCart = (productID) => {
+    setCart((prevCart) => {
+      // ใช้ .filter เพื่อเก็บสินค้าที่ "ไม่ใช่ไอดีที่เราจะลบ" เอาไว้
+      // ชิ้นไหนที่ไอดีตรงกับที่ส่งมา จะถูกคัดออกไป
+      return prevCart.filter((item) => item.id !== productID);
+    });
+  };
+
+  // function เพิ่ม และ ลด สินค้าในตะกร้า
+  const updateCartQuantity = (productID, amount) => {
+    setCart((prevCart) => {
+      return prevCart.map((item) => {
+        if (item.id === productID) {
+          //คำนวณจำนวนใหม่
+          const newQuantity = item.quantity + amount;
+
+          //ถ้าจำนวนน้อยกว่า 1 ให้คงที่ที่ 1
+          return { ...item, quantity: newQuantity < 1 ? 1 : newQuantity };
+        }
+        return item;
+      });
+    });
+  };
+
   // กรองข้อมูล
   const filteredData = data.filter((item) => {
     // สร้างเงื่อนไขสำหรับ "หมวดหมู่"
@@ -59,6 +86,23 @@ function App() {
 
   const pageTitle =
     selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1);
+
+  // สร้าง State สำหรับควบคุมการแจ้งเตือน
+  const [showSuccess, setShowSuccess] = useState(false);
+
+  //สร้างฟังก์ชัน Handle Checkout
+  const handleCheckout = () => {
+    if (cart.length === 0) {
+      alert("please select foods");
+      return;
+    }
+    // ล้างตะกร้า
+    setCart([]);
+
+    // โชว์หน้าต่างสำเร็จ
+    setShowSuccess(true);
+
+  };
 
   return (
     //ส่วนที่แสดงผลทั้งหมดในหน้าจอ
@@ -143,12 +187,42 @@ function App() {
                   {item.name}
                 </h4>
                 <div className="flex justify-between items-center mt-1">
-                  <span className="text-xs text-gray-400">
-                    ฿{item.price}x{item.quantity}
-                  </span>
+                  <div className="flex items-center gap-3 mt-2">
+                    {/* ปุ่ม - */}
+                    <button
+                      onClick={() => updateCartQuantity(item.id, -1)}
+                      className="w-6 h-6 flex items-center justify-center bg-whote border border-gray-200 rounded-md text-gray-600 hover-bg-gray-100 transition-colors"
+                    >
+                      <IoRemove size={14} />
+                    </button>
+
+                    {/* แสดงจำนวน */}
+                    <span className="font-bold text-gray-700 min-w-5 text-center">
+                      {item.quantity}
+                    </span>
+
+                    {/* ปุ่ม + */}
+                    <button
+                      onClick={() => updateCartQuantity(item.id, 1)}
+                      className="w-6 h-6 flex items-center justify-center bg-yellow-400 rounded-md text-white hover:bg-yellow-500 transition-colors shadow-sm"
+                    >
+                      <IoAdd size={14} />
+                    </button>
+
+                    <span className="text-xs text-gray-400 ml-1">
+                      @ ฿{item.price}
+                    </span>
+                  </div>
                   <span className="font-bold text-yellow-500">
                     ฿{(item.price * item.quantity).toFixed(2)}
                   </span>
+                  <button
+                    onClick={() => removeFromCart(item.id)}
+                    className="p-1.5 text-red-400 hover:text-red-700 hover:bg-red-200 rounded-lg transition-colors"
+                    title="Remove item"
+                  >
+                    <IoTrashOutline size={18} />
+                  </button>
                 </div>
               </div>
             </div>
@@ -167,7 +241,10 @@ function App() {
               })}
             </span>
           </div>
-          <button className="w-full bg-green-500 text-white py-4 rounded-2xl font-bold text-lg hover:bg-green-600 transition-all shadow-lg shadow-green-100">
+          <button
+            onClick={handleCheckout}
+            className="w-full bg-green-500 text-white py-4 rounded-2xl font-bold text-lg hover:bg-green-600 transition-all shadow-lg active:scale-95"
+          >
             Checkout
           </button>
         </div>
@@ -188,6 +265,46 @@ function App() {
               onClose={() => setSelectedProduct(null)}
               onConfirm={addToCart}
             />
+          </div>
+        </div>
+      )}
+
+      {/* --- Success Message Popup --- */}
+      {showSuccess && (
+        <div className="fixed inset-0 z-60 flex items-center justify-center p-4 animate-fade-in">
+          {/* ฉากหลังมืดจางๆ */}
+          <div className="absolute inset-0 bg-black/20 backdrop-blur-sm"></div>
+
+          {/* กล่องข้อความสีเขียว */}
+          <div className="bg-white p-8 rounded-4xl shadow-2xl z-10 flex flex-col items-center text-center animate-pop-in">
+            <div className="w-20 h-20 bg-green-100 text-green-500 rounded-full flex items-center justify-center mb-4">
+              <svg
+                className="w-12 h-12"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="3"
+                  d="M5 13l4 4L19 7"
+                ></path>
+              </svg>
+            </div>
+            <h2 className="text-2xl font-bold text-gray-800 mb-2">
+              Order Placed Successfully!
+            </h2>
+            <p className="text-gray-500">
+              Your order has been recorded in the system.
+            </p>
+
+            <button
+              onClick={() => setShowSuccess(false)}
+              className="mt-6 px-8 py-2 bg-gray-800 text-white rounded-xl font-medium hover:bg-gray-700 transition-all"
+            >
+              {`>>OK<<`}
+            </button>
           </div>
         </div>
       )}
