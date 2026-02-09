@@ -37,9 +37,9 @@ const Sidebar =({onMenuClick, activeMenu})=>{
             {/* Profile*/}
             <div className="mt-5">
                 <div className="flex flex-col items-center gap-3 bg-gray-50 p-7 rounded-xl border border-gray-100 cursor-pointer hover:bg-gray-100 transition-all">
-                    <img src="public\profile.jpg" alt="profile picture" className="w-10 h-10 rounded-full object-cover shadow-lg" />
+                    <img src="/profile.jpg" alt="profile picture" className="w-10 h-10 rounded-full object-cover shadow-lg" />
                 <div>
-                    <h4 className="font-bold text-sm text-gray-800">Nameeeeee</h4>
+                    <h4 className="font-bold text-sm text-gray-800">Natee</h4>
                     <p className="text-xs text-gray-500 py-2">Member : Goal</p>
                 </div>
 
