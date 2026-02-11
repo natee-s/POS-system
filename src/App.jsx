@@ -7,6 +7,7 @@ import { data } from "./data";
 import OrderSidebar from "./components/OrderSidebar";
 import { IoTrashOutline } from "react-icons/io5";
 import { IoAdd, IoRemove } from "react-icons/io5";
+import { IoMenuOutline, IoCartOutline } from "react-icons/io5";
 
 function App() {
   const [cart, setCart] = useState([]); //[] (Array ว่าง) เพราะตอนเริ่มเปิดหน้าเว็บมา ตะกร้าต้องว่างเปล่า (ไม่มีของ)
@@ -35,6 +36,11 @@ function App() {
     });
     // เมื่อเพิ่มเสร็จให้ปิดหน้าต่างเลือกสินค้า
     setSelectedProduct(null);
+
+    // ถ้าหน้าจอเล็ก (ต่ำกว่า 1024px) ให้เปิดตะกร้าโชว์ทันที
+    if (window.innerWidth < 1024) {
+      setIsCartOpen(true);
+    }
   };
 
   //ลบสินค้าออกจากตะกร้า
@@ -101,63 +107,80 @@ function App() {
 
     // โชว์หน้าต่างสำเร็จ
     setShowSuccess(true);
-
   };
+
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isCartOpen, setIsCartOpen] = useState(false);
 
   return (
     //ส่วนที่แสดงผลทั้งหมดในหน้าจอ
     <div className="flex w-full min-h-screen bg-gray-100 overflow-hidden">
       {/*พื้นที่สำหรับสร้าง sidebar*/}
-      <Sidebar
-        onMenuClick={setSelectedCategory}
-        activeMenu={selectedCategory}
-      />
+      <div
+        className={`
+        fixed insert-y-0 left-0 z-40 transform transition-traansform duration-300 lg:relative lg:translate-x-0 ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}
+        `}
+      >
+        <Sidebar
+          onMenuClick={(cat) => {
+            setSelectedCategory(cat);
+            setIsSidebarOpen(false);
+          }}
+          activeMenu={selectedCategory}
+        />
+      </div>
+
+      {/* ฉากมืดตอนเปิด Sidebar บนมือถือ */}
+      {isSidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-30 lg:hidden"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
 
       {/*พื้นที่สำหรับสร้าง main content*/}
       <div className="flex-1 bg-gray-50 h-screen overflow-y-auto flex flex-col">
         {/* --- ส่วนหัว (Header) --- */}
-        <header className="p-6 flex justify-between items-start sticky top-0 z-10 bg-gray-50">
+        <header className="p-4 md:p-6 flex justify-between items-start sticky top-0 z-10 bg-gray-50/80 backdrop-blur-md">
           {/*---ปุ่มย้อนกลับ + หัวข้อ---*/}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
+            {/* --- นี่คือปุ่ม Hamburger --- */}
+            <button
+              onClick={() => setIsSidebarOpen(true)}// เมื่อกดจะสั่งให้ Sidebar เปิด
+              className="lg:hidden p-2 bg-white rounded-xl shadow-sm hover:bg-gray-50 text-gray-600 border border-gray-100"
+            >
+              <IoMenuOutline size={28}/>
+
+            </button>
             {/*---ปุ่มย้อนกลับ---*/}
             <button className="bg-white p-3 rounded-2xl shadow-sm hover:shadow-red-500 transition-all text-gray-600">
               <IoArrowBackOutline size={20} />
             </button>
-            {/* กล่องข้อความ (Breadcrumb + Title) */}
+            {/* ---หัวข้อ--- */}
             <div className="flex flex-col">
-              {/* <div className="h-12 flex items-center">
-                <span className="text-sm text-gray-400 font-medium">
-                  Food & dirnk &gt; Burgers
-                </span>
-              </div> */}
-
-              {/* ---หัวข้อ--- */}
               <h2 className="text-3xl font-bold text-gray-800">{pageTitle}</h2>
             </div>
           </div>
-          {/* ฝั่งขวา: Search Bar */}
-          <div className="bg-white flex items-center gap-3 px-4 py-3 rounded-xl shadow-sm w-80 border border-gray-100 ">
+          {/* Search Bar ปรับความกว้างตามหน้าจอ */}
+          <div className=" bg-white flex items-center gap-3 px-4 py-2 md:py-3 rounded-xl shadow-sm w-40 md:w-80 border border-gray-100">
             <IoIosSearch className="text-gray-400 text-xl" />
             <input
               type="text"
-              placeholder="Search . . ."
-              className="bg-transparent outline-none text-gray-600 w-full placeholder-gray-400"
+              placeholder="Search..."
+              className="bg-transparent outline-none text-sm w-full"
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)} //ทุกครั้งที่มีการกดแป้นพิมพ์ (e), มันจะเอาค่าในช่องนั้น (e.target.value) ไปเก็บไว้ใน searchTerm
+              onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
         </header>
         {/*Card Area*/}
-        <main className="pt-12 px-8 pb-20 flex-1">
-          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-y-20 gap-x-8">
+        <main className="pt-4 px-4 md:px-8 pb-32 flex-1">
+          {/* ปรับเป็น 2 คอลัมน์บนมือถือ (grid-cols-2) */}
+          <div className="grid grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-8">
             {filteredData.map((food) => (
               <ProductCard
                 key={food.id}
-                img={food.img}
-                name={food.name}
-                detail={food.detail}
-                price={food.price}
-                //ส่งคำสั่ง onClick ไปให้ card*
+                {...food}
                 onClick={() => setSelectedProduct(food)}
               />
             ))}
@@ -165,10 +188,28 @@ function App() {
         </main>
       </div>
       {/* แสดงผลสินค้าที่เลือกในตะกร้า */}
-      <aside className="w-96 bg-white border-l border-gray-100 flex flex-col shadow-xl h-screen">
-        <h2 className="text-2xl font-bold text-gray-800 my-6 text-center">
-          Current Order
-        </h2>
+      <aside
+        className={`
+        fixed inset-y-0 right-0 z-50 flex flex-col bg-white shadow-2xl transition-transform duration-300
+        w-full ${isCartOpen ? "translate-x-0" : "translate-x-full"}
+        lg:relative lg:w-96 lg:translate-x-0 lg:shadow-none lg:border-l lg:border-gray-100
+      `}
+      >
+        {/* เพิ่มปุ่มปิดตะกร้าเฉพาะบนมือถือ */}
+        <div className="p-4 flex items-center justify-between lg:hidden border-b">
+          <button
+            onClick={() => setIsCartOpen(false)}
+            className="p-2 text-gray-500"
+          >
+            <IoArrowBackOutline size={24} />
+          </button>
+          <h2 className="text-xl font-bold">My Order</h2>
+          <div className="w-10"></div> {/* สร้างสมดุลให้หัวข้ออยู่กลาง */}
+        </div>
+
+        <div className="p-6 hidden lg:block">
+          <h2 className="text-2xl font-bold text-gray-800">Current Order</h2>
+        </div>
 
         {/* ส่วนรายการสินค้าในตะกร้า */}
         <div className="flex-1 overflow-y-auto px-6 space-y-4">
@@ -267,6 +308,25 @@ function App() {
             />
           </div>
         </div>
+      )}
+
+      {/* --- Floating Cart Button (โชว์เฉพาะมือถือ และจะโชว์ก็ต่อเมื่อมีของในตะกร้า) --- */}
+      {cart.length > 0 && !isCartOpen && (
+        <button
+          onClick={() => setIsCartOpen(true)}
+          className="lg:hidden fixed bottom-6 right-6 z-40 bg-yellow-400 text-white p-4 rounded-full shadow-2xl flex items-center gap-3 animate-pop-in active:scale-95 transition-transform"
+        >
+          <div className="relative">
+            <IoCartOutline size={28} />
+            {/* วงกลมสีแดงบอกจำนวนชิ้น */}
+            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center border-2 border-yellow-400">
+              {cart.reduce((sum, item) => sum + item.quantity, 0)}
+            </span>
+          </div>
+          <span className="font-bold text-lg">
+            ฿{totalAmount.toLocaleString()}
+          </span>
+        </button>
       )}
 
       {/* --- Success Message Popup --- */}
